@@ -48,7 +48,7 @@
 				mouseY = circle.y;				
 				stage.update();
 				createjs.Ticker.addEventListener("tick", onTickHandler);
-				createjs.Ticker.setFPS(1000);			
+				createjs.Ticker.setFPS(5);			
 				socket.emit('connected', playerID, circle.x, circle.y, color, radius);
 			});
 						
