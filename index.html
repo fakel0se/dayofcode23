@@ -114,10 +114,10 @@
 					else y = circle.y + 2;
 					x = (y - circle.y) / (mouseY - circle.y) * (mouseX - circle.x) + circle.x;	
 				}
-				//delete later
-				circle.x = x;
-				circle.y = y;  
-				stage.update();
+				//delete later or not
+				//circle.x = x;
+				//circle.y = y;  
+				//stage.update();
 				
 				socket.emit('player moved', x, y);	
 			};
