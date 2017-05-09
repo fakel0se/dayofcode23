@@ -115,9 +115,9 @@
 					x = Math.trunc((y - circle.y) / (mouseY - circle.y) * (mouseX - circle.x) + circle.x);	
 				}
 				//delete later or not
-				//circle.x = x;
-				//circle.y = y;  
-				//stage.update();
+				circle.x = x;
+				circle.y = y;  
+				stage.update();
 				
 				socket.emit('player moved', x, y);	
 			};
