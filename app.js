@@ -41,8 +41,8 @@ function onConnection(socket){
   });
   
 	socket.on('player moved', function(x, y){
-		socket.emit('imoved', x, y);
-		//socket.broadcast.emit('player moved', socket.id, x, y);
+		//socket.emit('imoved', x, y);
+		socket.broadcast.emit('player moved', socket.id, x, y);
 		players[socket.id].x = x;
 		players[socket.id].y = y;
   });	
