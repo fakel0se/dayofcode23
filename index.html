@@ -107,12 +107,12 @@
 					if (circle.x > mouseX)
 						x = circle.x - 2;
 					else x = circle.x + 2;
-					y = (x - circle.x) / (mouseX - circle.x) * (mouseY - circle.y) + circle.y;	
+					y = Math.trunc((x - circle.x) / (mouseX - circle.x) * (mouseY - circle.y) + circle.y);	
 				} else {
 					if (circle.y > mouseY)
 						y = circle.y - 2;
 					else y = circle.y + 2;
-					x = (y - circle.y) / (mouseY - circle.y) * (mouseX - circle.x) + circle.x;	
+					x = Math.trunc((y - circle.y) / (mouseY - circle.y) * (mouseX - circle.x) + circle.x);	
 				}
 				//delete later or not
 				//circle.x = x;
