@@ -42,7 +42,7 @@ function onConnection(socket){
   
 	socket.on('player moved', function(x, y){
 			socket.broadcast.emit('player moved', socket.id, x, y);
-			socket.emit('imoved', x, y);
+			//socket.emit('imoved', x, y);
 			if (x && y)
 			{	
 				players[socket.id].x = x;

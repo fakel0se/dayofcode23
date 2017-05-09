@@ -23,7 +23,6 @@
 			var circle;
 			var mouseX = 0;
 			var mouseY = 0;
-			var xPrev, yPrev;
 			
 			socket.on('connecting', function(playerID) {
 //				var data = {
@@ -115,15 +114,11 @@
 					else y = circle.y + 2;
 					x = Math.trunc((y - circle.y) / (mouseY - circle.y) * (mouseX - circle.x) + circle.x);	
 				}
-				
-				if (x == xPrev && y == yPrev)
-					return;
-				xPrev = x;
-				yPrev = y;
+
 				//delete later or not
-				//circle.x = x;
-				//circle.y = y;  
-				//stage.update();
+				circle.x = x;
+				circle.y = y;  
+				stage.update();
 				
 				socket.emit('player moved', x, y);	
 			};
