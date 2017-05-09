@@ -1,0 +1,159 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <script src="https://code.createjs.com/easeljs-0.8.0.min.js"> </script>
+    <script src="https://code.createjs.com/tweenjs-0.6.2.min.js"> </script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"> </script>
+    <title>Canvas Animation</title>
+    <style>
+      #canvas {border: solid 1px black;
+							 cursor: url('/cur'), auto;
+							}
+    </style>
+  </head> 
+  <body>
+    <canvas id="canvas"></canvas><br>
+    <script >
+			var socket = io();
+
+			stage = new createjs.Stage("canvas");
+			canvas = document.querySelector('canvas');
+			canvas.width = window.innerWidth-50;
+			canvas.height = window.innerHeight-50;
+			var circle;
+			var mouseX = 0;
+			var mouseY = 0;
+			
+			socket.on('connecting', function(playerID) {
+//				var data = {
+//					images: ["/qwe"],
+//					frames: {width: 88, height: 80, regY: 44, regX: 40},
+//					animations: {
+//						stand: [0],
+//						walk: [0, 4]
+//					}	  
+//				};
+//				var spriteSheet = new createjs.SpriteSheet(data);
+//				sprite = new createjs.Sprite(spriteSheet, "walk");	
+			
+				circle = new createjs.Shape();
+				let radius = getRandomInt(20, 50);
+				let color = 'rgba(' + getRandomInt(0,255) + ',' + getRandomInt(0,255) + ',' + getRandomInt(0,255) + ',1)';
+				circle.graphics.beginFill(color).drawCircle(0, 0, radius);
+				
+				stage.addChild(circle);
+				circle.x = getRandomInt(0, window.innerWidth);
+				circle.y = getRandomInt(0, window.innerHeight);
+				mouseX = circle.x;
+				mouseY = circle.y;				
+				stage.update();
+				createjs.Ticker.addEventListener("tick", onTickHandler);
+				createjs.Ticker.setFPS(30);			
+				socket.emit('connected', playerID, circle.x, circle.y, color, radius);
+			});
+			
+			socket.on('show players', function(players) {
+				for (player in players)
+					showPlayer(player, players[player].x, players[player].y, players[player].clr, players[player].r);
+			});
+			
+			socket.on('imready', function(ID, x, y, color, radius) {
+				showPlayer(ID, x, y, color, radius);
+			});
+
+
+			socket.on('player moved', function(playerID, x, y) {
+				window[playerID].x = x;
+				window[playerID].y = y;
+				stage.update();
+			});
+			
+			socket.on('dis', function(playerID) {
+				stage.removeChild(window[playerID]);
+			});		
+			
+			
+			function showPlayer(ID, x, y, color, radius) {
+				console.log(ID);
+//				var data = {
+//					images: ["/qwe"],
+//					frames: {width: 88, height: 80, regY: 44, regX: 40},
+//					animations: {
+//						stand: [0],
+//						walk: {
+//							frames: [0, 1, 2, 3, 4],
+//							speed: 0.5
+//						}
+//					}	  
+//				};
+//				var spriteSheet = new createjs.SpriteSheet(data);
+				let circle = new createjs.Shape();
+				circle.graphics.beginFill(color).drawCircle(0, 0, radius);
+				window[ID] = circle;
+				stage.addChild(window[ID]);
+				window[ID].x = x;
+				window[ID].y = y;
+				stage.update();
+			}
+
+			function onTickHandler(evt) {
+				if (!circle)
+					return;
+				if (interval(mouseX, circle.x) && interval(mouseY, circle.y)) {
+					//
+					return;					
+				}
+				let x;
+				let y;
+				
+				let diffX = mouseX - circle.x;
+				let diffY = mouseY - circle.y;
+				if (diffX < 0) diffX = -diffX;
+				if (diffY < 0) diffY = -diffY;
+				
+				if (diffX > diffY) {
+					if (circle.x > mouseX)
+						x = circle.x - 10;
+					else x = circle.x + 10;
+					y = (x - circle.x) / (mouseX - circle.x) * (mouseY - circle.y) + circle.y;	
+				} else {
+					if (circle.y > mouseY)
+						y = circle.y - 10;
+					else y = circle.y + 10;
+					x = (y - circle.y) / (mouseY - circle.y) * (mouseX - circle.x) + circle.x;	
+				}
+				socket.emit('player moved', x, y);	
+			};
+			
+			stage.on('stagemousemove', function(evt) {
+				mouseX = evt.stageX;
+				mouseY = evt.stageY;
+				//socket.emit('player moved', evt.stageX, evt.stageY);				
+			});
+
+			socket.on('imoved', function(x, y){
+				//var d = new Date();
+				//console.log(d.getHours(),':',d.getMinutes(),':',d.getSeconds(), ':', d.getMilliseconds(), ' update to ', x, ' ', y);
+				circle.x = x;
+				circle.y = y;  
+				stage.update();           
+			});							
+
+			function interval(a, b) 
+			{	
+				return ((a < (b + 10)) && (a > (b - 10)))
+			}
+			
+			function getRandomInt(min, max)			
+			{		
+				return Math.floor(Math.random() * (max - min + 1)) + min;		
+			}
+			
+			function getRandom(min, max)			
+			{		
+				return Math.random() * (max - min) + min;		
+			}								
+			
+    </script>
+  </body>
+</html>
